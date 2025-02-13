@@ -15,7 +15,7 @@ private:
 public:
     // Constructores:
     BigUnsigned(unsigned n = 0);
-    explicit BigUnsigned(const unsigned char* str); // Declarado como explicit para evitar ambigüedades
+    BigUnsigned(const unsigned char* str);
     BigUnsigned(const BigUnsigned&); // Constructor de copia
 
     // Operador de asignación:
