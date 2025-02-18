@@ -24,5 +24,9 @@ int main() {
     cin >> num1 >> num2;
     BigInteger result = gcd(num1, num2);
     cout << "El máximo común divisor es: " << result << endl;
+
     return 0;
 }
+
+
+// Método que permita calcular el promedio de bigUnsigned

@@ -6,6 +6,7 @@
 
 class BigUnsigned {
 private:
+    // Se almacenan los dígitos en orden inverso: dígito 0 = unidad, etc.
     std::vector<unsigned char> digits;
 
     // Función auxiliar para eliminar ceros a la izquierda (dígitos de mayor peso)

@@ -22,6 +22,7 @@ BigUnsigned::BigUnsigned(unsigned n) {
 }
 
 // Constructor a partir de una cadena de caracteres (null-terminated)
+// Se asume que la cadena contiene únicamente dígitos ASCII.
 BigUnsigned::BigUnsigned(const unsigned char* str) {
     // Determinar la longitud
     int len = 0;
