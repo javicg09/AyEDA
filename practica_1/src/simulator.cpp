@@ -29,7 +29,7 @@ void Simulator::Render() const {
       if (j == ant_.get_x() && i == ant_.get_y()) {
         std::cout << ant_;
       } else {
-        std::cout << (tape_.GetColor(j, i) == 0 ? ' ' : 'x');
+        std::cout << (tape_.GetColor(j, i) == 0 ? '0' : '1');
       }
     }
     std::cout << "\n";

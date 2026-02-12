@@ -16,7 +16,7 @@ int Tape::get_size_y() const { return size_y_; }
 std::ostream& operator<<(std::ostream& os, const Tape& t) {
   for (const std::vector<int>& row : t.color_) {
     for (int cell : row) {
-      os << (cell == 0 ? ' ' : 'x');
+      os << (cell == 0 ? '0' : '1');
     }
     os << "\n";
   }
