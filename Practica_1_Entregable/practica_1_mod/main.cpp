@@ -28,8 +28,7 @@ bool LoadConfig(const std::string& filename, int& sx, int& sy, int& ax, int& ay,
 int main(int argc, char* argv[]) {
   // Verificación de argumentos de línea de comandos
   if (argc < 2) {
-    std::cerr << "Uso: " << argv[0] << " <fichero_configuracion.txt>"
-              << std::endl;
+    std::cerr << "Uso: " << argv[0] << " <fichero_configuracion.txt>" << std::endl;
     return 1;
   }
 
