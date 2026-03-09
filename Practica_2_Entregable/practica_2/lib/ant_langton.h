@@ -10,6 +10,7 @@ class AntLangton : public Ant {
 
   // Implementación de las reglas generalizadas de giro
   void Move(Tape& tape) override;
+  std::string get_rules() const override { return rules_; }
 
  private:
   std::string rules_; // Cadena de 'D' e 'I'

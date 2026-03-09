@@ -8,9 +8,9 @@ OBJ_DIR = obj
 
 # Archivos fuente y objetos
 # El main está en la raíz, los demás en src/
-SOURCES = main.cpp $(SRC_DIR)/ant.cpp $(SRC_DIR)/simulator.cpp $(SRC_DIR)/tape.cpp
+SOURCES = main.cpp $(SRC_DIR)/ant.cpp $(SRC_DIR)/simulator.cpp $(SRC_DIR)/tape.cpp $(SRC_DIR)/ant_langton.cpp
 # Transformamos las rutas de fuentes a rutas de objetos en la carpeta obj/
-OBJECTS = $(OBJ_DIR)/main.o $(OBJ_DIR)/ant.o $(OBJ_DIR)/simulator.o $(OBJ_DIR)/tape.o
+OBJECTS = $(OBJ_DIR)/main.o $(OBJ_DIR)/ant.o $(OBJ_DIR)/simulator.o $(OBJ_DIR)/tape.o $(OBJ_DIR)/ant_langton.o
 
 # Nombre del ejecutable
 TARGET = langton_ant

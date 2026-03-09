@@ -49,6 +49,19 @@ Simulator::Simulator(const std::string& input_file) : steps_(0) {
   file.close();
 }
 
+// El método Run gestiona el bucle principal de la simulación
+void Simulator::Run() {
+  std::string input;
+  std::cout << "Simulación iniciada. Presione ENTER para avanzar, 'q' para detenerse.\n";
+  
+  while (true) {
+    Render();
+    std::getline(std::cin, input);
+    if (input == "q") break;
+    Step();
+  }
+}
+
 void Simulator::Step() {
   // Todas las hormigas realizan su movimiento en la cinta común
   for (Ant* ant : ants_) {
@@ -80,6 +93,41 @@ void Simulator::Render() const {
       }
     }
     std::cout << "\n";
+  }
+}
+
+// Asegúrate de incluir el nombre de la clase Simulator:: 
+// y el const al final de la firma.
+void Simulator::SaveStateToFile(const std::string& filename) const {
+  std::ofstream out_file(filename);
+  if (!out_file.is_open()) return;
+
+  // Línea 1: Tamaño y colores [cite: 38, 41]
+  out_file << tape_->get_size_x() << " " << tape_->get_size_y() << " " 
+           << tape_->get_num_colors() << "\n";
+
+  // Línea 2: Hormigas separadas por ';' [cite: 39, 42]
+  for (size_t i = 0; i < ants_.size(); ++i) {
+    char dir_char;
+    switch (ants_[i]->get_orientation()) {
+      case Ant::kArriba:    dir_char = '^'; break;
+      case Ant::kAbajo:     dir_char = 'v'; break;
+      case Ant::kIzquierda: dir_char = '<'; break;
+      case Ant::kDerecha:   dir_char = '>'; break;
+    }
+    out_file << ants_[i]->get_rules() << " " << ants_[i]->get_x() 
+             << " " << ants_[i]->get_y() << " " << dir_char;
+    if (i < ants_.size() - 1) out_file << " ; ";
+  }
+  out_file << "\n";
+
+  // Línea 3+: Celdas no blancas [cite: 39, 43]
+  for (int y = 0; y < tape_->get_size_y(); ++y) {
+    for (int x = 0; x < tape_->get_size_x(); ++x) {
+      if (tape_->GetColor(x, y) != 0) {
+        out_file << x << " " << y << " " << tape_->GetColor(x, y) << "\n";
+      }
+    }
   }
 }
 

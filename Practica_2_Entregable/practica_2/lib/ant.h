@@ -17,6 +17,7 @@ class Ant {
 
   // Ejecuta la lógica de giro, cambio de color y avance sobre la cinta.
   virtual void Move(Tape& tape) = 0;
+  virtual std::string get_rules() const = 0;
 
   // Lógica de giros
   void TurnLeft();

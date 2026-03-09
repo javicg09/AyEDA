@@ -20,6 +20,8 @@ int Tape::get_size_x() const { return size_x_; }
 
 int Tape::get_size_y() const { return size_y_; }
 
+int Tape::get_num_colors() const { return num_colors_; }
+
 std::ostream& operator<<(std::ostream& os, const Tape& t) {
   for (const std::vector<int>& row : t.color_) {
     for (int cell : row) {
