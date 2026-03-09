@@ -8,28 +8,22 @@
 // los pasos de la simulación y la visualización conjunta.
 class Simulator {
  public:
-  // Contructor
-  Simulator(int sx, int sy, int ax, int ay, Ant::Orientation adir);
+  // El constructor ahora se encarga de procesar el fichero de configuración
+  Simulator(const std::string& input_file);
+  ~Simulator(); // Destructor para liberar la memoria de las hormigas
 
-  // Ejecuta un paso completo: movimiento, actualización y dibujo.
-  void Step();
-  
-  // Indica si la hormiga ha salido de los límites de la cinta.
-  bool IsFinished() const;
-
-  // Permite añadir celdas negras iniciales desde el archivo.
-  void SetInitialBlackCell(int x, int y);
-
-  // Dibuja el estado actual de la cinta con la hormiga superpuesta.
-  void Render() const;
-
-  // Guarda el estado actual de la simulación en un fichero con el formato requerido.
-  void SaveStateToFile(const std::string& filename) const;
+  void Run(); // Ejecuta el bucle principal
+  void Step(); // Evoluciona un paso todas las hormigas
+  void Render() const; // Visualización por pantalla
+  void SaveStateToFile(const std::string& filename) const; // Persistencia 
 
  private:
-  Tape tape_;
-  Ant ant_;
+  Tape* tape_;
+  std::vector<Ant*> ants_; // Vector de punteros para polimorfismo
   int steps_;
+  
+  // Lista de colores ANSI para asignar a cada hormiga 
+  const std::vector<std::string> kColors = { "\033[1;31m", "\033[1;32m", "\033[1;34m", "\033[1;35m", "\033[1;36m" };
 };
 
 #endif  // SIMULATOR_H_
