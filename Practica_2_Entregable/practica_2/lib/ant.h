@@ -12,10 +12,11 @@ class Ant {
   enum Orientation { kIzquierda = 0, kDerecha = 1, kArriba = 2, kAbajo = 3 };
 
   // Constructor
-  Ant(int x, int y, Orientation dir);
+  Ant(int x, int y, Orientation dir, const std::string& color_ansi);
+  virtual ~Ant() {} // Destructor virtual necesario para polimorfismo.
 
   // Ejecuta la lógica de giro, cambio de color y avance sobre la cinta.
-  void Move(Tape& tape);
+  virtual void Move(Tape& tape) = 0;
 
   // Lógica de giros
   void TurnLeft();
@@ -30,10 +31,11 @@ class Ant {
   // Sobrecarga para mostrar la hormiga según su dirección: <, >, ^, v.
   friend std::ostream& operator<<(std::ostream& os, const Ant& ant);
 
- private:
+ protected:
   int x_;
   int y_;
   Orientation dir_;
+  std::string color_ansi_;
 };
 
 #endif  // ANT_H_

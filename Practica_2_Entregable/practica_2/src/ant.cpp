@@ -1,6 +1,6 @@
 #include "../lib/ant.h"
 
-Ant::Ant(int x, int y, Orientation dir) : x_(x), y_(y), dir_(dir) {}
+Ant::Ant(int x, int y, Orientation dir, const std::string& color_ansi) : x_(x), y_(y), dir_(dir), color_ansi_(color_ansi) {}
 
 void Ant::Move(Tape& tape) {
   int current_color = tape.GetColor(x_, y_);
@@ -46,6 +46,6 @@ Ant::Orientation Ant::get_orientation() const { return dir_; }
 
 std::ostream& operator<<(std::ostream& os, const Ant& ant) {
   char icons[] = {'<', '>', '^', 'v'};
-  os << icons[ant.dir_];
+  os << ant.color_ansi_ << icons[ant.dir_] << "\033[0m";
   return os;
 }
