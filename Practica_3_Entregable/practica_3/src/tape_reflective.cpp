@@ -1,19 +1,25 @@
 #include "../lib/tape_reflective.h"
 
 TapeReflective::TapeReflective(int x, int y, int num_colors) : Tape(x, y, num_colors) {
-    cells_.assign(size_y_, std::vector<int>(size_x_, 0));
+    celdas_.assign(size_y_, std::vector<int>(size_x_, 0));
 }
 
 int TapeReflective::GetColor(int x, int y) const {
   if (IsInside(x, y)) {
-    return cells_[y][x];
+    return celdas_[y][x];
   }
   return -1; // Señal de fuera de límites para que el simulador reaccione
 }
 
 void TapeReflective::NextColor(int x, int y) {
   if (IsInside(x, y)) {
-    cells_[y][x] = (cells_[y][x] + 1) % num_colors_;
+    celdas_[y][x] = (celdas_[y][x] + 1) % num_colors_;
+  }
+}
+
+void TapeReflective::SetColor(int x, int y, int color) {
+  if (IsInside(x, y)) {
+    celdas_[y][x] = color;
   }
 }
 

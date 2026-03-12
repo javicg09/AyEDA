@@ -1,51 +1,37 @@
 #include "../lib/ant.h"
 
-Ant::Ant(int x, int y, Orientation dir, const std::string& color_ansi) : x_(x), y_(y), dir_(dir), color_ansi_(color_ansi) {}
-
-void Ant::Move(Tape& tape) {
-  int current_color = tape.GetColor(x_, y_);
-
-  if (current_color == 0) {  // Blanca
-    tape.SetColor(x_, y_, 1);
-    TurnLeft();
-  } else {                   // Negra
-    tape.SetColor(x_, y_, 0);
-    TurnRight();
-  }
-  Forward();
+Ant::Ant(int x, int y, Orientation orient, const std::string& color_code, int initial_life)
+    : x_(x), y_(y), orientation_(orient), color_code_(color_code), life_time_(initial_life) {
 }
 
-void Ant::TurnLeft() {
-  switch (dir_) {
-    case kArriba:    dir_ = kIzquierda; break;
-    case kIzquierda: dir_ = kAbajo;     break;
-    case kAbajo:     dir_ = kDerecha;   break;
-    case kDerecha:   dir_ = kArriba;    break;
-  }
-}
-
-void Ant::TurnRight() {
-  switch (dir_) {
-    case kArriba:    dir_ = kDerecha;   break;
-    case kDerecha:   dir_ = kAbajo;     break;
-    case kAbajo:     dir_ = kIzquierda; break;
-    case kIzquierda: dir_ = kArriba;    break;
-  }
-}
-
-void Ant::Forward() {
-  if (dir_ == kArriba) y_--;
-  else if (dir_ == kAbajo) y_++;
-  else if (dir_ == kIzquierda) x_--;
-  else if (dir_ == kDerecha) x_++;
-}
+int Ant::get_life() const { return life_time_; }
+void Ant::set_life(int life) { life_time_ = life; }
+void Ant::decrement_life() { if (life_time_ > 0) life_time_--; }
+bool Ant::IsDead() const { return life_time_ <= 0; }
 
 int Ant::get_x() const { return x_; }
 int Ant::get_y() const { return y_; }
-Ant::Orientation Ant::get_orientation() const { return dir_; }
+
+Ant::Orientation Ant::get_orientation() const { return orientation_; }
 
 std::ostream& operator<<(std::ostream& os, const Ant& ant) {
-  char icons[] = {'<', '>', '^', 'v'};
-  os << ant.color_ansi_ << icons[ant.dir_] << "\033[0m";
+  // Aplicamos el color ANSI de la hormiga
+  os << ant.color_code_;
+  
+  // Representación visual según orientación
+  switch (ant.orientation_) {
+    case Ant::kArriba:    os << "^"; break;
+    case Ant::kAbajo:     os << "v"; break;
+    case Ant::kIzquierda: os << "<"; break;
+    case Ant::kDerecha:   os << ">"; break;
+    // Para las carnívoras usamos caracteres especiales 
+    case Ant::kArribaDer: os << "/"; break; 
+    case Ant::kAbajoIzq:  os << "/"; break;
+    case Ant::kArribaIzq: os << "\\"; break;
+    case Ant::kAbajoDer:  os << "\\"; break;
+  }
+  
+  // Reset de color ANSI
+  os << "\033[0m";
   return os;
 }

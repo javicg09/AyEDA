@@ -1,137 +1,153 @@
 #include "../lib/simulator.h"
-#include "../lib/ant_langton.h"
 #include <fstream>
-#include <sstream>
+#include <iostream>
 
-Simulator::Simulator(const std::string& input_file) : steps_(0) {
-  std::ifstream file(input_file);
-  if (!file.is_open()) {
-    throw std::runtime_error("Error: No se pudo abrir el fichero: " + input_file);
-  }
+Simulator::Simulator(Tape* tape) : tape_(tape) {}
 
-  // Línea 1: Tamaño y número de colores
-  int sx, sy, n_colors;
-  file >> sx >> sy >> n_colors;
-  tape_ = new Tape(sx, sy, n_colors);
-
-  // Línea 2: Hormigas
-  std::string line;
-  std::getline(file, line); // Limpiar buffer
-  std::getline(file, line);
-  std::stringstream ss(line);
-  std::string segment;
-
-  int color_idx = 0;
-  while (std::getline(ss, segment, ';')) { // Separadas por ';' 
-    std::stringstream ant_data(segment);
-    std::string rules;
-    int x, y;
-    char dir_char;
-    ant_data >> rules >> x >> y >> dir_char;
-
-    // Convertir char a enum Orientation
-    Ant::Orientation orient;
-    if (dir_char == '^') orient = Ant::kArriba;
-    else if (dir_char == 'v') orient = Ant::kAbajo;
-    else if (dir_char == '<') orient = Ant::kIzquierda;
-    else orient = Ant::kDerecha;
-
-    // Creamos la hormiga específica (Polimorfismo)
-    ants_.push_back(new AntLangton(x, y, orient, rules, kColors[color_idx % kColors.size()]));
-    color_idx++;
-  }
-
-  // Línea 3..n: Celdas no blancas
-  int cx, cy, c_val;
-  while (file >> cx >> cy >> c_val) {
-    tape_->SetColor(cx, cy, c_val);
-  }
-  file.close();
+void Simulator::AddAnt(std::unique_ptr<Ant> ant) {
+  ants_.push_back(std::move(ant));
 }
 
-// El método Run gestiona el bucle principal de la simulación
 void Simulator::Run() {
   std::string input;
-  std::cout << "Simulación iniciada. Presione ENTER para avanzar, 'q' para detenerse.\n";
+  std::cout << "Simulación iniciada. Presione ENTER para avanzar, 'q' para salir.\n";
   
-  while (true) {
+  while (HasLivingAnts()) {
     Render();
     std::getline(std::cin, input);
     if (input == "q") break;
     Step();
   }
+
+  if (!HasLivingAnts()) {
+    std::cout << "Simulación finalizada: No quedan hormigas vivas.\n";
+  }
 }
 
 void Simulator::Step() {
-  // Todas las hormigas realizan su movimiento en la cinta común
-  for (Ant* ant : ants_) {
-    // Comprobar límites antes de mover
-    if (ant->get_x() >= 0 && ant->get_x() < tape_->get_size_x() &&
-        ant->get_y() >= 0 && ant->get_y() < tape_->get_size_y()) {
-      ant->Move(*tape_); // Llamada polimórfica
+  for (auto& ant : ants_) {
+    if (!ant->IsDead()) {
+      // Guardar posición actual
+      int x_old = ant->get_x();
+      int y_old = ant->get_y();
+
+      // Mover la hormiga (esto calcula el nuevo x, y, y la orientación)
+      ant->Move(*tape_);
+
+      // Cambiar el color de la celda donde estaba (x_old, y_old)
+      tape_->NextColor(x_old, y_old);
     }
   }
-  steps_++;
+
+  // 4. Lógica de interacción y limpieza
+  ApplyInteractions();
+  CleanupDeadAnts();
+}
+
+void Simulator::ApplyInteractions() {
+  for (size_t i = 0; i < ants_.size(); ++i) {
+    for (size_t j = 0; j < ants_.size(); ++j) {
+      if (i == j) continue; // No interactúa consigo misma
+
+      // Si coinciden en la misma posición
+      if (ants_[i]->get_x() == ants_[j]->get_x() && 
+          ants_[i]->get_y() == ants_[j]->get_y()) {
+        
+        // Intentar ver si la hormiga i es carnívora usando dynamic_cast
+        AntCarnivore* predator = dynamic_cast<AntCarnivore*>(ants_[i].get());
+        
+        if (predator && !ants_[j]->IsDead()) {
+          int victim_life = ants_[j]->get_life();
+          int stolen_life = static_cast<int>(victim_life * predator->get_voracity());
+          
+          // Transferencia de vida
+          ants_[j]->set_life(victim_life - stolen_life);
+          predator->set_life(predator->get_life() + stolen_life);
+          
+          std::cout << "[Interacción] Carnívora robó " << stolen_life << " de vida.\n";
+        }
+      }
+    }
+  }
+}
+
+void Simulator::CleanupDeadAnts() {
+  // Elimina del vector aquellas hormigas cuyo IsDead() sea true
+  ants_.erase(
+    std::remove_if(ants_.begin(), ants_.end(),
+      [](const std::unique_ptr<Ant>& ant) {
+        return ant->IsDead();
+      }),
+    ants_.end()
+  );
 }
 
 void Simulator::Render() const {
-  std::cout << "\033[H\033[2JStep: " << steps_ << "\n";
-  for (int i = 0; i < tape_->get_size_y(); ++i) {
-    for (int j = 0; j < tape_->get_size_x(); ++j) {
+  // Limpiar pantalla
+  std::cout << "\033[2J\033[1;1H"; 
+
+  // Dibujar la cinta
+  for (int y = 0; y < tape_->get_size_y(); ++y) {
+    for (int x = 0; x < tape_->get_size_x(); ++x) {
       bool ant_present = false;
-      for (Ant* ant : ants_) {
-        if (ant->get_x() == j && ant->get_y() == i) {
-          std::cout << *ant; // Dibuja la hormiga con su color
+      for (const auto& ant : ants_) {
+        if (ant->get_x() == x && ant->get_y() == y) {
+          std::cout << *ant; // Llama al operador << de Ant
           ant_present = true;
           break;
         }
       }
       if (!ant_present) {
-        int color = tape_->GetColor(j, i);
-        if (color == 0) std::cout << " "; 
-        else std::cout << color; // Muestra el número de color
+        int color = tape_->GetColor(x, y);
+        if (color == 0) std::cout << ".";
+        else std::cout << color;
       }
+      std::cout << " ";
     }
     std::cout << "\n";
   }
+
+  // Mostrar información detallada de cada hormiga (Requisito Práctica 3)
+  std::cout << "\n--- Hormigas Vivas: " << ants_.size() << " ---\n";
+  for (const auto& ant : ants_) {
+    std::cout << ant->get_type() << ": (" << ant->get_x() << "," 
+              << ant->get_y() << ") Vida: " << ant->get_life() << "\n";
+  }
 }
 
-// Asegúrate de incluir el nombre de la clase Simulator:: 
-// y el const al final de la firma.
 void Simulator::SaveStateToFile(const std::string& filename) const {
-  std::ofstream out_file(filename);
-  if (!out_file.is_open()) return;
+  std::ofstream out(filename);
+  if (!out.is_open()) return;
 
-  // Línea 1: Tamaño y colores [cite: 38, 41]
-  out_file << tape_->get_size_x() << " " << tape_->get_size_y() << " " 
-           << tape_->get_num_colors() << "\n";
+  // Línea 1: Dimensiones y colores
+  out << tape_->get_size_x() << " " << tape_->get_size_y() << " " 
+      << tape_->get_num_colors() << "\n";
 
-  // Línea 2: Hormigas separadas por ';' [cite: 39, 42]
+  // Línea 2: Hormigas con su tipo (H- o C-)
   for (size_t i = 0; i < ants_.size(); ++i) {
     char dir_char;
     switch (ants_[i]->get_orientation()) {
-      case Ant::kArriba:    dir_char = '^'; break;
-      case Ant::kAbajo:     dir_char = 'v'; break;
+      case Ant::kArriba: dir_char = '^'; break;
+      case Ant::kAbajo: dir_char = 'v'; break;
       case Ant::kIzquierda: dir_char = '<'; break;
-      case Ant::kDerecha:   dir_char = '>'; break;
+      case Ant::kDerecha: dir_char = '>'; break;
+      default: dir_char = 'D'; break; // Representación genérica para diagonales
     }
-    out_file << ants_[i]->get_rules() << " " << ants_[i]->get_x() 
-             << " " << ants_[i]->get_y() << " " << dir_char;
-    if (i < ants_.size() - 1) out_file << " ; ";
+    
+    out << ants_[i]->get_type() << " " << ants_[i]->get_x() << " " 
+        << ants_[i]->get_y() << " " << dir_char;
+    
+    if (i < ants_.size() - 1) out << " ; ";
   }
-  out_file << "\n";
+  out << "\n";
 
-  // Línea 3+: Celdas no blancas [cite: 39, 43]
+  // Línea 3+: Celdas no blancas
   for (int y = 0; y < tape_->get_size_y(); ++y) {
     for (int x = 0; x < tape_->get_size_x(); ++x) {
       if (tape_->GetColor(x, y) != 0) {
-        out_file << x << " " << y << " " << tape_->GetColor(x, y) << "\n";
+        out << x << " " << y << " " << tape_->GetColor(x, y) << "\n";
       }
     }
   }
-}
-
-Simulator::~Simulator() {
-  for (Ant* ant : ants_) delete ant;
-  delete tape_;
+  std::cout << "Estado guardado en: " << filename << "\n";
 }

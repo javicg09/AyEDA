@@ -9,12 +9,13 @@ class TapeReflective : public Tape {
 
   int GetColor(int x, int y) const override;
   void NextColor(int x, int y) override;
+  void SetColor(int x, int y, int color) override;
 
   // Método necesario para que el Simulator detecte el choque
   bool IsInside(int x, int y) const;
 
  private:
-  std::vector<std::vector<int>> cells_;
+  std::vector<std::vector<int>> celdas_;
 };
 
 #endif

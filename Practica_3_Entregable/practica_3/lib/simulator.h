@@ -1,29 +1,37 @@
 #ifndef SIMULATOR_H_
 #define SIMULATOR_H_
 
-#include "../lib/ant.h"
-#include "../lib/tape.h"
+#include <vector>
+#include <memory>
+#include <string>
+#include <iostream>
+#include <algorithm>
 
-// Gestiona la interacción entre la cinta y la hormiga, controlando
-// los pasos de la simulación y la visualización conjunta.
+#include "tape.h"
+#include "ant.h"
+#include "ant_herbivore.h"
+#include "ant_carnivore.h"
+
 class Simulator {
  public:
-  // El constructor ahora se encarga de procesar el fichero de configuración
-  Simulator(const std::string& input_file);
-  ~Simulator(); // Destructor para liberar la memoria de las hormigas
+  // El constructor recibe la cinta ya creada (polimorfismo)
+  Simulator(Tape* tape);
+  ~Simulator() = default;
 
-  void Run(); // Ejecuta el bucle principal
-  void Step(); // Evoluciona un paso todas las hormigas
-  void Render() const; // Visualización por pantalla
-  void SaveStateToFile(const std::string& filename) const; // Persistencia 
+  void AddAnt(std::unique_ptr<Ant> ant);
+  void Run();
+  void Step();
+  void Render() const;
+  
+  void SaveStateToFile(const std::string& filename) const;
+  bool HasLivingAnts() const { return !ants_.empty(); }
 
  private:
-  Tape* tape_;
-  std::vector<Ant*> ants_; // Vector de punteros para polimorfismo
-  int steps_;
-  
-  // Lista de colores ANSI para asignar a cada hormiga 
-  const std::vector<std::string> kColors = { "\033[1;31m", "\033[1;32m", "\033[1;34m", "\033[1;35m", "\033[1;36m" };
+  Tape* tape_; // Puntero a la clase base Tape
+  std::vector<std::unique_ptr<Ant>> ants_;
+
+  void ApplyInteractions();
+  void CleanupDeadAnts();
 };
 
-#endif  // SIMULATOR_H_
+#endif

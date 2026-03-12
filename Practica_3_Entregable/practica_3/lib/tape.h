@@ -17,6 +17,9 @@ class Tape {
   // Incrementa el color de la celda de forma cíclica (0 -> 1 -> ... -> n-1 -> 0).
   virtual void NextColor(int x, int y) = 0;
 
+  // Nuevo método para inicialización
+  virtual void SetColor(int x, int y, int color) = 0;
+
   int get_size_x() const;
   int get_size_y() const;
   int get_num_colors() const;

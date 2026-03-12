@@ -1,42 +1,43 @@
 #ifndef ANT_H_
 #define ANT_H_
 
+#include <string>
 #include <iostream>
-#include "../lib/tape.h"
+#include "tape.h"
 
-// Representa a la hormiga. Es responsable de su posición, orientación,
-// movimiento según las reglas y visualización propia.
 class Ant {
  public:
-  // Enum de valores de orientación de la hormiga
-  enum Orientation { kIzquierda = 0, kDerecha = 1, kArriba = 2, kAbajo = 3 };
+  // Orientaciones ortogonales (H) y diagonales (C)
+  enum Orientation { kArriba, kDerecha, kAbajo, kIzquierda, 
+                     kArribaDer, kAbajoDer, kAbajoIzq, kArribaIzq };
 
-  // Constructor
-  Ant(int x, int y, Orientation dir, const std::string& color_ansi);
-  virtual ~Ant() {} // Destructor virtual necesario para polimorfismo.
+  Ant(int x, int y, Orientation orient, const std::string& color_code, int initial_life);
+  virtual ~Ant() {}
 
-  // Ejecuta la lógica de giro, cambio de color y avance sobre la cinta.
+  // Métodos virtuales puros para la jerarquía
   virtual void Move(Tape& tape) = 0;
   virtual std::string get_rules() const = 0;
+  virtual std::string get_type() const = 0; // Retorna "H-reglas" o "C-reglas"
 
-  // Lógica de giros
-  void TurnLeft();
-  void TurnRight();
-  void Forward();
+  // Gestión de vida 
+  int get_life() const;
+  void set_life(int life);
+  void decrement_life();
+  bool IsDead() const;
 
-  // Getters
+  // Getters de posición y estado
   int get_x() const;
   int get_y() const;
   Orientation get_orientation() const;
 
-  // Sobrecarga para mostrar la hormiga según su dirección: <, >, ^, v.
+  // Sobrecarga para mostrar info: tipo, posición y vida 
   friend std::ostream& operator<<(std::ostream& os, const Ant& ant);
 
  protected:
-  int x_;
-  int y_;
-  Orientation dir_;
-  std::string color_ansi_;
+  int x_, y_;
+  Orientation orientation_;
+  std::string color_code_;
+  int life_time_; // Atributo LifeTime
 };
 
-#endif  // ANT_H_
+#endif

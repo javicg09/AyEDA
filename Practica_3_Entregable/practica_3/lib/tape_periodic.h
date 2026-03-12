@@ -10,6 +10,7 @@ class TapePeriodic : public Tape {
 
     int GetColor(int x, int y) const override;
     void NextColor(int x, int y) override;
+    void SetColor(int x, int y, int color) override;
 
     // Método auxiliar para gestionar el envolvimiento periódico
     int WrapX(int x) const;

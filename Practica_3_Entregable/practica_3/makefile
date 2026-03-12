@@ -1,40 +1,32 @@
-# Variables de compilación
+# Nombre del ejecutable
+TARGET = hormiga_sim
+
+# Compilador y flags
 CXX = g++
-CXXFLAGS = -std=c++17 -Wall -g -Ilib  # -Ilib permite usar #include "ant.h" sin rutas relativas complejas
+CXXFLAGS = -std=c++14 -Wall -Wextra -g
 
 # Directorios
-SRC_DIR = src
-OBJ_DIR = obj
+SRCDIR = src
+LIBDIR = lib
+OBJDIR = obj
 
 # Archivos fuente y objetos
-# El main está en la raíz, los demás en src/
-SOURCES = main.cpp $(SRC_DIR)/ant.cpp $(SRC_DIR)/simulator.cpp $(SRC_DIR)/tape.cpp $(SRC_DIR)/ant_langton.cpp
-# Transformamos las rutas de fuentes a rutas de objetos en la carpeta obj/
-OBJECTS = $(OBJ_DIR)/main.o $(OBJ_DIR)/ant.o $(OBJ_DIR)/simulator.o $(OBJ_DIR)/tape.o $(OBJ_DIR)/ant_langton.o
+SOURCES = $(wildcard $(SRCDIR)/*.cpp) main.cpp
+OBJECTS = $(SOURCES:%.cpp=$(OBJDIR)/%.o)
 
-# Nombre del ejecutable
-TARGET = langton_ant
+# Crear el directorio de objetos si no existe
+$(shell mkdir -p $(OBJDIR)/$(SRCDIR))
 
 # Regla principal
 $(TARGET): $(OBJECTS)
-	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJECTS)
+	$(CXX) $(CXXFLAGS) -o $@ $^
 
-# Regla para el objeto de main.cpp (que está en la raíz)
-$(OBJ_DIR)/main.o: main.cpp
-	@mkdir -p $(OBJ_DIR)
-	$(CXX) $(CXXFLAGS) -c main.cpp -o $@
-
-# Regla genérica para los objetos en src/
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
-	@mkdir -p $(OBJ_DIR)
+# Regla para compilar los .o
+$(OBJDIR)/%.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-# Limpiar archivos generados
+# Limpieza
 clean:
-	rm -rf $(OBJ_DIR) $(TARGET)
+	rm -rf $(OBJDIR) $(TARGET)
 
-# Regla para ejecutar con el archivo input.txt
-run: $(TARGET)
-	./$(TARGET) input.txt
-
-.PHONY: all clean run
+.PHONY: clean
