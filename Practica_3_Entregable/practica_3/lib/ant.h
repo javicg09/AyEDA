@@ -8,8 +8,7 @@
 class Ant {
  public:
   // Orientaciones ortogonales (H) y diagonales (C)
-  enum Orientation { kArriba, kDerecha, kAbajo, kIzquierda, 
-                     kArribaDer, kAbajoDer, kAbajoIzq, kArribaIzq };
+  enum Orientation { kArriba, kDerecha, kAbajo, kIzquierda };
 
   Ant(int x, int y, Orientation orient, const std::string& color_code, int initial_life);
   virtual ~Ant() {}
@@ -17,7 +16,7 @@ class Ant {
   // Métodos virtuales puros para la jerarquía
   virtual void Move(Tape& tape) = 0;
   virtual std::string get_rules() const = 0;
-  virtual std::string get_type() const = 0; // Retorna "H-reglas" o "C-reglas"
+  virtual std::string get_type() const = 0;
 
   // Gestión de vida 
   int get_life() const;

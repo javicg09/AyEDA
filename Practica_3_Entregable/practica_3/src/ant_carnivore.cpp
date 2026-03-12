@@ -18,26 +18,20 @@ double AntCarnivore::get_voracity() const { return voracity_; }
 
 void AntCarnivore::Turn(int color) {
   char rule = rules_[color % rules_.length()];
-  // Las orientaciones diagonales en nuestro Enum son 4, 5, 6, 7
-  // kArribaDer(4), kAbajoDer(5), kAbajoIzq(6), kArribaIzq(7)
   
-  int current_diag = static_cast<int>(orientation_);
   if (rule == 'D') {
-    // Gira horario en las diagonales
-    current_diag = (current_diag == 7) ? 4 : current_diag + 1;
+    orientation_ = static_cast<Orientation>((orientation_ + 1) % 4);
   } else {
-    // Gira anti-horario
-    current_diag = (current_diag == 4) ? 7 : current_diag - 1;
+    orientation_ = static_cast<Orientation>((orientation_ + 3) % 4);
   }
-  orientation_ = static_cast<Orientation>(current_diag);
 }
 
 void AntCarnivore::Forward(Tape&) {
   switch (orientation_) {
-    case kArribaDer: x_++; y_--; break;
-    case kAbajoDer:  x_++; y_++; break;
-    case kAbajoIzq:  x_--; y_++; break;
-    case kArribaIzq: x_--; y_--; break;
+    case kArriba:    x_++; y_--; break;
+    case kDerecha:   x_++; y_++; break;
+    case kAbajo:     x_--; y_++; break;
+    case kIzquierda: x_--; y_--; break;
     default: break;
   }
 }

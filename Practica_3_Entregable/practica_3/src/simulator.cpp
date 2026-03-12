@@ -27,19 +27,14 @@ void Simulator::Run() {
 void Simulator::Step() {
   for (auto& ant : ants_) {
     if (!ant->IsDead()) {
-      // Guardar posición actual
-      int x_old = ant->get_x();
-      int y_old = ant->get_y();
-
-      // Mover la hormiga (esto calcula el nuevo x, y, y la orientación)
+      // Cambiamos el color de la celda
+      tape_->NextColor(ant->get_x(), ant->get_y());
+      
+      // la hormiga consulta el color, gira y se mueve
       ant->Move(*tape_);
-
-      // Cambiar el color de la celda donde estaba (x_old, y_old)
-      tape_->NextColor(x_old, y_old);
     }
   }
 
-  // 4. Lógica de interacción y limpieza
   ApplyInteractions();
   CleanupDeadAnts();
 }
@@ -123,15 +118,21 @@ void Simulator::SaveStateToFile(const std::string& filename) const {
   out << tape_->get_size_x() << " " << tape_->get_size_y() << " " 
       << tape_->get_num_colors() << "\n";
 
-  // Línea 2: Hormigas con su tipo (H- o C-)
+  // Línea 2: Hormigas
   for (size_t i = 0; i < ants_.size(); ++i) {
+    // Usamos el método virtual polimórfico
+    int orient_int = ants_[i]->get_orientation();
+    
+    // Mapeo local para el guardado (opcional, podrías tener un método to_char() en la hormiga)
     char dir_char;
-    switch (ants_[i]->get_orientation()) {
-      case Ant::kArriba: dir_char = '^'; break;
-      case Ant::kAbajo: dir_char = 'v'; break;
-      case Ant::kIzquierda: dir_char = '<'; break;
-      case Ant::kDerecha: dir_char = '>'; break;
-      default: dir_char = 'D'; break; // Representación genérica para diagonales
+    // Si es herbívora (0-3), si es carnívora (4-7)
+    if (orient_int < 4) {
+      const char* map = "^>v<";
+      dir_char = map[orient_int];
+    } else {
+      // Símbolos para diagonales
+      const char map[] = {'/', '\\', '/', '\\'}; 
+      dir_char = map[orient_int - 4];
     }
     
     out << ants_[i]->get_type() << " " << ants_[i]->get_x() << " " 
@@ -141,7 +142,7 @@ void Simulator::SaveStateToFile(const std::string& filename) const {
   }
   out << "\n";
 
-  // Línea 3+: Celdas no blancas
+  // Línea 3: Celdas no blancas
   for (int y = 0; y < tape_->get_size_y(); ++y) {
     for (int x = 0; x < tape_->get_size_x(); ++x) {
       if (tape_->GetColor(x, y) != 0) {

@@ -24,11 +24,6 @@ std::ostream& operator<<(std::ostream& os, const Ant& ant) {
     case Ant::kAbajo:     os << "v"; break;
     case Ant::kIzquierda: os << "<"; break;
     case Ant::kDerecha:   os << ">"; break;
-    // Para las carnívoras usamos caracteres especiales 
-    case Ant::kArribaDer: os << "/"; break; 
-    case Ant::kAbajoIzq:  os << "/"; break;
-    case Ant::kArribaIzq: os << "\\"; break;
-    case Ant::kAbajoDer:  os << "\\"; break;
   }
   
   // Reset de color ANSI

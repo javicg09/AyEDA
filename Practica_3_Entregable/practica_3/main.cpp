@@ -54,7 +54,7 @@ int main(int argc, char* argv[]) {
   std::stringstream ss(line);
   std::string ant_data;
   
-  // Las hormigas vienen separadas por ';'
+ // Las hormigas vienen separadas por ';'
   while (std::getline(ss, ant_data, ';')) {
     std::stringstream ant_ss(ant_data);
     std::string type_rules, dir_str;
@@ -68,13 +68,7 @@ int main(int argc, char* argv[]) {
     else if (dir_str == ">")  orient = Ant::kDerecha;
     else if (dir_str == "v")  orient = Ant::kAbajo;
     else if (dir_str == "<")  orient = Ant::kIzquierda;
-    // Añadimos las diagonales para las carnívoras
-    else if (dir_str == "/")  orient = Ant::kArribaDer;
-    else if (dir_str == "X")  orient = Ant::kAbajoDer; 
-    else if (dir_str == "\\") orient = Ant::kAbajoIzq;
-    else if (dir_str == "I")  orient = Ant::kArribaIzq;
     else orient = Ant::kArriba;
-
     // Vida inicial y Voracidad
     int initial_life = 100;
     
