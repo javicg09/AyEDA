@@ -4,7 +4,7 @@
 #include "exploration_function.h"
 
 template<class Key>
-class LinealFunction : public ExplorationFuntion<Key>{
+class LinealFunction : public ExplorationFunction<Key>{
   public:
     unsigned operator()(const Key& k, unsigned i)const override {
       return i;

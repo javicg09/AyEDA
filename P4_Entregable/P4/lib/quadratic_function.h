@@ -4,7 +4,7 @@
 #include "exploration_function.h"
 
 template<class Key>
-class QuadraticFunction : public ExplorationFuntion<Key>{
+class QuadraticFunction : public ExplorationFunction<Key>{
   public:
     unsigned operator()(const Key& k, unsigned i)const override {
       return i * i;

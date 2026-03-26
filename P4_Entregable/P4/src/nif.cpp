@@ -24,3 +24,8 @@ bool NIF::operator==(const NIF& other) const{
 NIF::operator long() const {
   return nif_;
 }
+
+std::istream& operator>>(std::istream& is, NIF& nif) {
+    is >> nif.nif_;
+    return is;
+}

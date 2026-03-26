@@ -5,7 +5,7 @@
 #include "dispersion_function.h"
 
 template<class Key>
-class DoubleDispersionFunction : public ExplorationFuntion<Key>{
+class DoubleDispersionFunction : public ExplorationFunction<Key>{
   public:
     DoubleDispersionFunction(DispersionFunction<Key>* fd) : fd_(fd) {}
 

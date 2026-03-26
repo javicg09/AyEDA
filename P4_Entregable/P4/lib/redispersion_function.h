@@ -5,7 +5,7 @@
 #include <cstdlib>
 
 template<class Key>
-class RedispersionFunction : public ExplorationFuntion<Key>{
+class RedispersionFunction : public ExplorationFunction<Key>{
   public:
     unsigned operator()(const Key& k, unsigned i)const override {
       srand((long)k);
