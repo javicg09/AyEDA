@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 
-#include "../lib/nif.h"
+#include "../lib/libro.h"
 #include "../lib/hash_table.h"
 #include "../lib/module_dispersion.h"
 #include "../lib/sum_dispersion.h"
@@ -27,32 +27,32 @@ int main(int argc, char* argv[]) {
     }
 
     // 2. Crear función de dispersión según fdCode
-    DispersionFunction<NIF>* fd;
+    DispersionFunction<Libro>* fd;
     switch(fdCode) {
-        case 1: fd = new ModuleDispersion<NIF>(tableSize); break;
-        case 2: fd = new SumDispersion<NIF>(tableSize); break;
-        case 3: fd = new RandomDispersion<NIF>(tableSize); break;
+        case 1: fd = new ModuleDispersion<Libro>(tableSize); break;
+        case 2: fd = new SumDispersion<Libro>(tableSize); break;
+        case 3: fd = new RandomDispersion<Libro>(tableSize); break;
     }
     // 3. Crear función de exploración según feCode
-    ExplorationFunction<NIF>* fe = nullptr;
+    ExplorationFunction<Libro>* fe = nullptr;
     if (hashType == "close") {
         switch(feCode) {
-            case 1: fe = new LinealFunction<NIF>(); break;
-            case 2: fe = new QuadraticFunction<NIF>(); break;
-            case 3: fe = new DoubleDispersionFunction<NIF>(fd); break;
-            case 4: fe = new RedispersionFunction<NIF>(); break;
+            case 1: fe = new LinealFunction<Libro>(); break;
+            case 2: fe = new QuadraticFunction<Libro>(); break;
+            case 3: fe = new DoubleDispersionFunction<Libro>(fd); break;
+            case 4: fe = new RedispersionFunction<Libro>(); break;
         }
     }
     // 4. Crear la tabla hash
-    Sequence<NIF>* table;
+    Sequence<Libro>* table;
     if (hashType == "close") {
-        table = new HashTable<NIF, StaticSequence<NIF>>(tableSize, *fd, *fe, blockSize);
+        table = new HashTable<Libro, StaticSequence<Libro>>(tableSize, *fd, *fe, blockSize);
     } else {
-        table = new HashTable<NIF, DynamicSequence<NIF>>(tableSize, *fd);
+        table = new HashTable<Libro, DynamicSequence<Libro>>(tableSize, *fd);
     }
     // 5. Menú insertar/buscar
     int opcion;
-    NIF k;
+    Libro k;
     do {
         std::cout << "1. Insertar" << std::endl;
         std::cout << "2. Buscar" << std::endl;
@@ -62,23 +62,15 @@ int main(int argc, char* argv[]) {
 
         switch(opcion) {
             case 1:
-                do {
-                    std::cout << "Introduce el NIF (8 digitos): ";
-                    std::cin >> k;
-                    if ((long)k < 10000000 || (long)k > 99999999)
-                        std::cout << "NIF invalido, intentalo de nuevo" << std::endl;
-                } while ((long)k < 10000000 || (long)k > 99999999);
+                std::cout << "Introduce los datos del libro: " << std::endl;
+                std::cin >> k;
                 if (table->insert(k)) std::cout << "Insertado correctamente" << std::endl;
                 else std::cout << "No se pudo insertar" << std::endl;
                 break;
 
             case 2:
-                do {
-                    std::cout << "Introduce el NIF (8 digitos): ";
-                    std::cin >> k;
-                    if ((long)k < 10000000 || (long)k > 99999999)
-                        std::cout << "NIF invalido, intentalo de nuevo" << std::endl;
-                } while ((long)k < 10000000 || (long)k > 99999999);
+                std::cout << "Introduce los datos del libro a buscar: " << std::endl;
+                std::cin >> k;
                 if (table->search(k)) std::cout << "Encontrado" << std::endl;
                 else std::cout << "No encontrado" << std::endl;
                 break;

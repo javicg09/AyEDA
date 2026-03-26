@@ -19,3 +19,20 @@ Cuántos elementos caben en cada posición de la tabla.
 2 = Cuadrática (i²)
 3 = Doble dispersión (f(k) * i)
 4 = Redispersión (f⁽ⁱ⁾(k))
+
+Modificación:
+Libro {
+    Clase ISBN  -> struct // Continuo debajo
+    string autor
+    string titulo
+    int año_publicacion
+    string genero
+}
+
+struct {
+    prefijo
+    grupo
+    titular
+    publicacion
+    digito_control
+}
