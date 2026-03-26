@@ -64,15 +64,15 @@ int main(int argc, char* argv[]) {
             case 1:
                 std::cout << "Introduce los datos del libro: " << std::endl;
                 std::cin >> k;
-                if (table->insert(k)) std::cout << "Insertado correctamente" << std::endl;
-                else std::cout << "No se pudo insertar" << std::endl;
+                if (table->insert(k)) std::cout << "Insertado correctamente\n" << std::endl;
+                else std::cout << "No se pudo insertar\n" << std::endl;
                 break;
 
             case 2:
-                std::cout << "Introduce los datos del libro a buscar: " << std::endl;
-                std::cin >> k;
-                if (table->search(k)) std::cout << "Encontrado" << std::endl;
-                else std::cout << "No encontrado" << std::endl;
+                std::cout << "Introduce el ISBN del libro a buscar: " << std::endl;
+                leerISBN(std::cin, k);
+                if (table->search(k)) std::cout << "Encontrado\n" << std::endl;
+                else std::cout << "No encontrado\n" << std::endl;
                 break;
         }
     } while(opcion != 0);

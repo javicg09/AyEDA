@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include <sstream>
 
 struct ISBN {
   std::string prefijo;       // 978 o 979
@@ -28,6 +29,7 @@ class Libro {
     bool operator==(const Libro& other) const;
 
     friend std::istream& operator>>(std::istream& is, Libro& libro);
+    friend std::istream& leerISBN(std::istream& is, Libro& libro);
 
   private:
     ISBN isbn_;

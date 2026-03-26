@@ -42,3 +42,18 @@ std::istream& operator>>(std::istream& is, Libro& libro) {
     std::getline(is, libro.genero_);
     return is;
 }
+
+std::istream& leerISBN(std::istream& is, Libro& libro) {
+    std::cout << "ISBN (formato XXX-X-XX-XXXXXX-X): ";
+    std::string isbn;
+    is >> isbn;
+    
+    std::stringstream ss(isbn);
+    std::getline(ss, libro.isbn_.prefijo, '-');
+    std::getline(ss, libro.isbn_.grupo, '-');
+    std::getline(ss, libro.isbn_.titular, '-');
+    std::getline(ss, libro.isbn_.publicacion, '-');
+    std::getline(ss, libro.isbn_.digito_control, '-');
+    
+    return is;
+}
