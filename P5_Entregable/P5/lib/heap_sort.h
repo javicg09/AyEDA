@@ -3,6 +3,7 @@
 
 #include "static_sequence.h"
 #include <algorithm>
+#include <iostream>
 
 template<class Key>
 void sink(StaticSequence<Key>& seq, unsigned size, unsigned i){
@@ -20,14 +21,24 @@ void sink(StaticSequence<Key>& seq, unsigned size, unsigned i){
 }
 
 template<class Key>
-void heapSort(StaticSequence<Key>& seq, unsigned size) {
+void heapSort(StaticSequence<Key>& seq, unsigned size, bool trace = false) {
   unsigned mid = (size / 2) - 1;
   for (int i = mid; i >= 0; i--){
     sink(seq, size, i);
+    if (trace) {
+      for (unsigned k = 0; k < size; k++)
+        std::cout << seq[k] << " ";
+      std::cout << std::endl;
+    }
   }
   for (int i = size - 1; i > 0; i--){
     std::swap(seq[0], seq[i]);
     sink(seq, i, 0);
+    if (trace) {
+      for (unsigned k = 0; k < size; k++)
+        std::cout << seq[k] << " ";
+      std::cout << std::endl;
+    }
   }
 }
 

@@ -6,12 +6,14 @@
 template<class Key>
 class SortMethod {
   public:
-    SortMethod(StaticSequence<Key>& seq, unsigned size) : seq_(seq), size_(size) {}
+    SortMethod(StaticSequence<Key>& seq, unsigned size, bool trace = false)
+      : seq_(seq), size_(size), trace_(trace) {}
     virtual void Sort() = 0;
 
-  private:
+  protected:
     StaticSequence<Key>& seq_;
     unsigned size_;
+    bool trace_;
 };
 
 #endif

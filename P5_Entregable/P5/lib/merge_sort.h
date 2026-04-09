@@ -3,11 +3,12 @@
 
 #include "static_sequence.h"
 #include <algorithm>
+#include <vector>
 
 template<class Key>
 void mix(StaticSequence<Key>& seq, unsigned begin, unsigned mid, unsigned end) {
-  Key aux[end - begin + 1];
-  int i = begin; j = mid + 1; k = 0;
+  std::vector<Key> aux(end - begin + 1);
+  int i = begin, j = mid + 1, k = 0;
   while (i <= mid && j <= end) {
     if (seq[i] < seq[j]) {
         aux[k] = seq[i];
@@ -29,12 +30,17 @@ void mix(StaticSequence<Key>& seq, unsigned begin, unsigned mid, unsigned end) {
 }
 
 template<class Key>
-void mergeSort(StaticSequence<Key>& seq, unsigned begin, unsigned end) {
+void mergeSort(StaticSequence<Key>& seq, unsigned begin, unsigned end, unsigned size, bool trace = false) {
   if (begin < end) {
     unsigned mid = (begin + end) / 2;
-    mergeSort(seq, begin, mid);
-    mergeSort(seq, mid + 1, end);
+    mergeSort(seq, begin, mid, size, trace);
+    mergeSort(seq, mid + 1, end, size, trace);
     mix(seq, begin, mid, end);
+    if (trace) {
+      for (unsigned k = 0; k < size; k++)
+        std::cout << seq[k] << " ";
+      std::cout << std::endl;
+    }
   }
 }
 

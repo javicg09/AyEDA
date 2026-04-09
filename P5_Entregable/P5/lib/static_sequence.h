@@ -6,8 +6,8 @@
 template<class Key>
 class StaticSequence : public Sequence<Key> {
   public:
-    StaticSequence(const unsigned size) : size_(size) {
-      data_ = new Key[size_];
+    StaticSequence(const unsigned capacity) : capacity_(capacity), size_(0) {
+      data_ = new Key[capacity_];
     }
 
     bool search(const Key& k) const override {
@@ -25,7 +25,7 @@ class StaticSequence : public Sequence<Key> {
     }
 
     bool isFull() const {
-      return size_ == blockSize_;
+      return size_ == capacity_;
     }
 
     Key operator[](const unsigned i) const override {
@@ -38,6 +38,7 @@ class StaticSequence : public Sequence<Key> {
 
   private:
     Key* data_;
+    unsigned capacity_;
     unsigned size_;
 };
 
