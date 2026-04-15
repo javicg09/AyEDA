@@ -6,7 +6,7 @@
 #include <iostream>
 
 template<class Key>
-void selectionSort(StaticSequence<Key>& seq, unsigned size, bool trace = false) {
+void selectionSort(StaticSequence<Key>& seq, unsigned size, int log = 0) {
   for (unsigned i = 0; i < size - 1; i++) {
     unsigned minPos = i;  // asume que i es el mínimo
     for (unsigned j = i + 1; j < size; j++) {
@@ -15,7 +15,7 @@ void selectionSort(StaticSequence<Key>& seq, unsigned size, bool trace = false) 
       }
     }
     std::swap(seq[i], seq[minPos]);  // coloca el mínimo en su sitio
-    if (trace) {
+    if (log >= 2) {
       for (unsigned k = 0; k < size; k++)
         std::cout << seq[k] << " ";
       std::cout << std::endl;

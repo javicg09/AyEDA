@@ -7,11 +7,11 @@
 template<class Key>
 class Merge : public SortMethod<Key> {
   public:
-    Merge(StaticSequence<Key>& seq, unsigned size, bool trace = false)
-      : SortMethod<Key>(seq, size, trace) {}
+    Merge(StaticSequence<Key>& seq, unsigned size, int log = 0)
+      : SortMethod<Key>(seq, size, log) {}
 
     void Sort() override {
-      mergeSort(this->seq_, 0, this->size_ - 1, this->size_, this->trace_);
+      mergeSort(this->seq_, 0, this->size_ - 1, this->size_, this->log_);
     }
 };
 

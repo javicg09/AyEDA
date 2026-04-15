@@ -11,7 +11,7 @@
 
 // Funciones auxiliares
 void printUsage() {
-    std::cout << "Uso: ./sort -size <s> -ord <m> -init <i> [f] [-trace <y|n>] [-alpha <a>]" << std::endl;
+    std::cout << "Uso: ./sort -size <s> -ord <m> -init <i> [f] [-log <y|n>] [-alpha <a>]" << std::endl;
     std::cout << std::endl;
     std::cout << "Opciones:" << std::endl;
     std::cout << "  -size <s>       Tamaño de la secuencia" << std::endl;
@@ -25,7 +25,7 @@ void printUsage() {
     std::cout << "                    manual = introducir manualmente" << std::endl;
     std::cout << "                    random = valores aleatorios" << std::endl;
     std::cout << "                    file <f> = leer de fichero" << std::endl;
-    std::cout << "  -trace <y|n>    Mostrar traza (y=sí, n=no)" << std::endl;
+    std::cout << "  -log <int>      Mostrar log (niveles 0 - 4)" << std::endl;
     std::cout << "  -alpha <a>      Factor de reducción para ShellSort (0 < a < 1)" << std::endl;
 }
 
@@ -37,7 +37,8 @@ int main(int argc, char* argv[]) {
 
   // Valores por defecto
   unsigned sequenceSize = 0;
-  std::string ord, init, trace, filename;
+  int log = 0;
+  std::string ord, init, filename;
   double alpha = -1.0;
 
   // Parseo de argumentos
@@ -56,9 +57,9 @@ int main(int argc, char* argv[]) {
         if (i + 1 >= argc) { std::cerr << "Error: falta nombre de fichero para -init file\n"; return 1; }
         filename = argv[++i];
       }
-    } else if (arg == "-trace") {
-      if (i + 1 >= argc) { std::cerr << "Error: falta valor para -trace\n"; return 1; }
-      trace = argv[++i];
+    } else if (arg == "-log") {
+      if (i + 1 >= argc) { std::cerr << "Error: falta valor para -log\n"; return 1; }
+      log = std::stoi(argv[++i]);
     } else if (arg == "-alpha") {
       if (i + 1 >= argc) { std::cerr << "Error: falta valor para -alpha\n"; return 1; }
       alpha = std::stod(argv[++i]);
@@ -68,6 +69,10 @@ int main(int argc, char* argv[]) {
   if (sequenceSize == 0) {
     std::cerr << "Error: el tamaño de la secuencia debe ser mayor que 0\n";
     return 1;
+  }
+
+  if (log < 0 || log > 4) {
+    std::cerr << "Error: El nivel de log debe ser un número entre 0 y 4\n";
   }
 
   if (!ord.empty() && ord[0] == 'e' && (alpha <= 0.0 || alpha >= 1.0)) {
@@ -110,23 +115,21 @@ int main(int argc, char* argv[]) {
   // Método de ordenación
   SortMethod<NIF>* method = nullptr;
 
-  bool doTrace = (trace == "y");
-
   switch(ord[0]) {
     case 'a':
-      method = new Selection<NIF>(seq, sequenceSize, doTrace);
+      method = new Selection<NIF>(seq, sequenceSize, log);
       break;
     case 'b':
-      method = new Bubble<NIF>(seq, sequenceSize, doTrace);
+      method = new Bubble<NIF>(seq, sequenceSize, log);
       break;
     case 'c':
-      method = new Merge<NIF>(seq, sequenceSize, doTrace);
+      method = new Merge<NIF>(seq, sequenceSize, log);
       break;
     case 'd':
-      method = new Heap<NIF>(seq, sequenceSize, doTrace);
+      method = new Heap<NIF>(seq, sequenceSize, log);
       break;
     case 'e':
-      method = new Shell<NIF>(seq, sequenceSize, alpha, doTrace);
+      method = new Shell<NIF>(seq, sequenceSize, alpha, log);
       break;
     default:
       std::cerr << "Error: método de ordenación '" << ord << "' no válido\n";
@@ -134,8 +137,5 @@ int main(int argc, char* argv[]) {
       return 1;
   }
   method->Sort();
-  for (unsigned i = 0; i < sequenceSize; i++) {
-    std::cout << seq[i] << " ";
-  }
   std::cout << std::endl;
 }

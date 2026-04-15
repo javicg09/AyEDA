@@ -7,11 +7,11 @@
 template<class Key>
 class Shell : public SortMethod<Key> {
   public:
-    Shell(StaticSequence<Key>& seq, unsigned size, double alpha, bool trace = false)
-      : SortMethod<Key>(seq, size, trace), alpha_(alpha) {}
+    Shell(StaticSequence<Key>& seq, unsigned size, double alpha, int log = 0)
+      : SortMethod<Key>(seq, size, log), alpha_(alpha) {}
 
     void Sort() override {
-      shellSort(this->seq_, this->size_, this->alpha_, this->trace_);
+      shellSort(this->seq_, this->size_, this->alpha_, this->log_);
     }
 
   private:

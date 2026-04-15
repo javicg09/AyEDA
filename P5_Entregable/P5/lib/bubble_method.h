@@ -7,11 +7,11 @@
 template<class Key>
 class Bubble : public SortMethod<Key> {
   public:
-    Bubble(StaticSequence<Key>& seq, unsigned size, bool trace = false)
-      : SortMethod<Key>(seq, size, trace) {}
+    Bubble(StaticSequence<Key>& seq, unsigned size, int log = 0)
+      : SortMethod<Key>(seq, size, log) {}
 
     void Sort() override {
-      bubbleSort(this->seq_, this->size_, this->trace_);
+      bubbleSort(this->seq_, this->size_, this->log_);
     }
 };
 

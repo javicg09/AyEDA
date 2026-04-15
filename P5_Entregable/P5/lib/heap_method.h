@@ -7,11 +7,11 @@
 template<class Key>
 class Heap : public SortMethod<Key> {
   public:
-    Heap(StaticSequence<Key>& seq, unsigned size, bool trace = false)
-      : SortMethod<Key>(seq, size, trace) {}
+    Heap(StaticSequence<Key>& seq, unsigned size, int log = 0)
+      : SortMethod<Key>(seq, size, log) {}
 
     void Sort() override {
-      heapSort(this->seq_, this->size_, this->trace_);
+      heapSort(this->seq_, this->size_, this->log_);
     }
 };
 

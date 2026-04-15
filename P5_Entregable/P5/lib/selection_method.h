@@ -7,11 +7,11 @@
 template<class Key>
 class Selection : public SortMethod<Key> {
   public:
-    Selection(StaticSequence<Key>& seq, unsigned size, bool trace = false)
-      : SortMethod<Key>(seq, size, trace) {}
+    Selection(StaticSequence<Key>& seq, unsigned size, int log = 0)
+      : SortMethod<Key>(seq, size, log) {}
 
     void Sort() override {
-      selectionSort(this->seq_, this->size_, this->trace_);
+      selectionSort(this->seq_, this->size_, this->log_);
     }
 };
 

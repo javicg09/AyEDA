@@ -30,13 +30,13 @@ void mix(StaticSequence<Key>& seq, unsigned begin, unsigned mid, unsigned end) {
 }
 
 template<class Key>
-void mergeSort(StaticSequence<Key>& seq, unsigned begin, unsigned end, unsigned size, bool trace = false) {
+void mergeSort(StaticSequence<Key>& seq, unsigned begin, unsigned end, unsigned size, int log = 0) {
   if (begin < end) {
     unsigned mid = (begin + end) / 2;
-    mergeSort(seq, begin, mid, size, trace);
-    mergeSort(seq, mid + 1, end, size, trace);
+    mergeSort(seq, begin, mid, size, log);
+    mergeSort(seq, mid + 1, end, size, log);
     mix(seq, begin, mid, end);
-    if (trace) {
+    if (log >= 2) {
       for (unsigned k = 0; k < size; k++)
         std::cout << seq[k] << " ";
       std::cout << std::endl;
