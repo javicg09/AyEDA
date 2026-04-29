@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <iostream>
 
-// Imprime la secuencia completa con un prefijo descriptivo
+// Imprime la secuencia completa
 template<class Key>
 void printSeq(const StaticSequence<Key>& seq, unsigned size, const std::string& label) {
   std::cout << label;
