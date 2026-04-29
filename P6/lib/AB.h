@@ -49,6 +49,10 @@ class AB {
     }
   }
 
+  int contarMultiplosDe5() const {
+    return contarMultiplosDe5Rec(raiz);
+  }
+
  protected:
   NodoB<Key>* raiz;
 
@@ -70,6 +74,12 @@ class AB {
     destruir(nodo->getIzdo());
     destruir(nodo->getDcho());
     delete nodo;
+  }
+
+  int contarMultiplosDe5Rec(NodoB<Key>* nodo) const {
+    if (!nodo) return 0;
+    int count = (nodo->getDato() % 5 == 0) ? 1 : 0;
+    return count + contarMultiplosDe5Rec(nodo->getIzdo()) + contarMultiplosDe5Rec(nodo->getDcho());
   }
 };
 
