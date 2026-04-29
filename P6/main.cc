@@ -4,9 +4,9 @@
 #include <iostream>
 #include <string>
 
-#include "ABB.h"
-#include "ABE.h"
-#include "nif.h"
+#include "lib/ABB.h"
+#include "lib/ABE.h"
+#include "lib/nif.h"
 
 int main(int argc, char* argv[]) {
   std::string tipoArbol;
