@@ -8,6 +8,27 @@
 #include "lib/ABE.h"
 #include "lib/nif.h"
 
+void printUsage(const char* prog) {
+  std::cout << "Uso:\n"
+            << "  " << prog << " -ab <abe|abb> -init <modo> [opciones]\n\n"
+            << "Opciones de -ab:\n"
+            << "  abe          Arbol binario equilibrado\n"
+            << "  abb          Arbol binario de busqueda\n\n"
+            << "Modos de -init:\n"
+            << "  manual       Arbol vacio; el usuario inserta claves\n"
+            << "  random s     Genera e inserta s claves NIF aleatorias\n"
+            << "  file s f     Lee s claves NIF del fichero f e inserta\n\n"
+            << "Menu interactivo:\n"
+            << "  [0] Salir\n"
+            << "  [1] Insertar clave NIF\n"
+            << "  [2] Buscar clave NIF\n"
+            << "  [3] Mostrar arbol en inorden\n\n"
+            << "Ejemplos:\n"
+            << "  " << prog << " -ab abb -init manual\n"
+            << "  " << prog << " -ab abe -init random 8\n"
+            << "  " << prog << " -ab abb -init file 10 data/nifs.txt\n";
+}
+
 int main(int argc, char* argv[]) {
   std::string tipoArbol;
   std::string modoInit;
@@ -16,7 +37,10 @@ int main(int argc, char* argv[]) {
 
   for (int i = 1; i < argc; ++i) {
     std::string arg = argv[i];
-    if (arg == "-ab" && i + 1 < argc) {
+    if (arg == "--help" || arg == "-h") {
+      printUsage(argv[0]);
+      return 0;
+    } else if (arg == "-ab" && i + 1 < argc) {
       tipoArbol = argv[++i];
     } else if (arg == "-init" && i + 1 < argc) {
       modoInit = argv[++i];
