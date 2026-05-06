@@ -5,6 +5,7 @@
 #include "NodoAVL.h"
 #include <iostream>
 #include <queue>
+#include <vector>
 
 template <typename Key>
 class AVL : public ABB<Key> {
@@ -16,6 +17,18 @@ class AVL : public ABB<Key> {
     return insertarAVL(this->raiz, new NodoAVL<Key>(k), crece);
   }
 
+  void eliminarNodosPares() {
+    std::vector<Key> claves;
+    recogerInorden(this->raiz, claves);
+    limpiarArbol(this->raiz);
+    this->raiz = nullptr;
+    for (const Key& k : claves) {
+      if (k % 2 != 0) insertar(k);
+    }
+  }
+
+  int tamanyo() const { return this->tama(this->raiz); }
+
   void escribir(std::ostream& os) const override {
     if (!this->raiz) {
       os << "Nivel 0: [.]\n";
@@ -26,6 +39,20 @@ class AVL : public ABB<Key> {
 
  private:
   bool traza_;
+
+  void recogerInorden(NodoB<Key>* nodo, std::vector<Key>& claves) const {
+    if (!nodo) return;
+    recogerInorden(nodo->getIzdo(), claves);
+    claves.push_back(nodo->getDato());
+    recogerInorden(nodo->getDcho(), claves);
+  }
+
+  void limpiarArbol(NodoB<Key>* nodo) {
+    if (!nodo) return;
+    limpiarArbol(nodo->getIzdo());
+    limpiarArbol(nodo->getDcho());
+    delete nodo;
+  }
 
   bool insertarAVL(NodoB<Key>*& nodo, NodoAVL<Key>* nuevo, bool& crece) {
     if (!nodo) {

@@ -32,7 +32,11 @@ void printUsage(const char* prog) {
             << "  " << prog << " -ab abb -init manual\n"
             << "  " << prog << " -ab abe -init random 8\n"
             << "  " << prog << " -ab avl -init random 4 -trace y\n"
-            << "  " << prog << " -ab abb -init file 10 data/nifs.txt\n";
+            << "  " << prog << " -ab abb -init file 10 data/nifs.txt\n\n"
+            << "Compilacion y tests:\n"
+            << "  make build   Compila el programa principal\n"
+            << "  make test    Compila y ejecuta el test unitario del AVL\n"
+            << "  make clean   Elimina los binarios generados\n";
 }
 
 int main(int argc, char* argv[]) {
