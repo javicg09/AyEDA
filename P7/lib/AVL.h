@@ -19,7 +19,7 @@ class AVL : public ABB<Key> {
 
   void eliminarNodosPares() {
     std::vector<Key> claves;
-    recogerInorden(this->raiz, claves);
+    recogerOrden(this->raiz, claves);
     limpiarArbol(this->raiz);
     this->raiz = nullptr;
     for (const Key& k : claves) {
@@ -40,11 +40,11 @@ class AVL : public ABB<Key> {
  private:
   bool traza_;
 
-  void recogerInorden(NodoB<Key>* nodo, std::vector<Key>& claves) const {
+  void recogerOrden(NodoB<Key>* nodo, std::vector<Key>& claves) const {
     if (!nodo) return;
-    recogerInorden(nodo->getIzdo(), claves);
+    recogerOrden(nodo->getIzdo(), claves);
     claves.push_back(nodo->getDato());
-    recogerInorden(nodo->getDcho(), claves);
+    recogerOrden(nodo->getDcho(), claves);
   }
 
   void limpiarArbol(NodoB<Key>* nodo) {
