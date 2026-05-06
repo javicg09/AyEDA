@@ -16,9 +16,9 @@ class AVL : public ABB<Key> {
     return insertarAVL(this->raiz, new NodoAVL<Key>(k), crece);
   }
 
-  void escribir(std::ostream& os) const {
+  void escribir(std::ostream& os) const override {
     if (!this->raiz) {
-      os << "[arbol vacio]\n";
+      os << "Nivel 0: [.]\n";
       return;
     }
     escribirNiveles(os, this->raiz, traza_);
@@ -45,25 +45,25 @@ class AVL : public ABB<Key> {
     if (nuevo->getDato() < nodo->getDato()) {
       bool resultado = insertarAVL(nodo->getIzdo(), nuevo, crece);
       if (crece) {
-        nodoAvl->setBal(nodoAvl->getBal() - 1);
-        if (nodoAvl->getBal() == -2) {
+        nodoAvl->setBal(nodoAvl->getBal() + 1);
+        if (nodoAvl->getBal() == 2) {
           if (traza_) {
             std::cout << "Desbalanceo:\n";
             escribirNiveles(std::cout, this->raiz, true);
           }
           NodoAVL<Key>* hijoIzq = static_cast<NodoAVL<Key>*>(nodo->getIzdo());
-          if (hijoIzq->getBal() == 1) {
+          Key datoAntes = nodoAvl->getDato();
+          int balAntes = nodoAvl->getBal();
+          if (hijoIzq->getBal() == -1) {
             rotarID(nodo);
             if (traza_) {
-              std::cout << "Rotacion ID en [" << nodoAvl->getDato() << "("
-                        << nodoAvl->getBal() << ")]:\n";
+              std::cout << "Rotacion ID en [" << datoAntes << "(" << balAntes << ")]:\n";
               escribirNiveles(std::cout, this->raiz, true);
             }
           } else {
             rotarII(nodo);
             if (traza_) {
-              std::cout << "Rotacion II en [" << nodoAvl->getDato() << "("
-                        << nodoAvl->getBal() << ")]:\n";
+              std::cout << "Rotacion II en [" << datoAntes << "(" << balAntes << ")]:\n";
               escribirNiveles(std::cout, this->raiz, true);
             }
           }
@@ -76,25 +76,25 @@ class AVL : public ABB<Key> {
     } else {
       bool resultado = insertarAVL(nodo->getDcho(), nuevo, crece);
       if (crece) {
-        nodoAvl->setBal(nodoAvl->getBal() + 1);
-        if (nodoAvl->getBal() == 2) {
+        nodoAvl->setBal(nodoAvl->getBal() - 1);
+        if (nodoAvl->getBal() == -2) {
           if (traza_) {
             std::cout << "Desbalanceo:\n";
             escribirNiveles(std::cout, this->raiz, true);
           }
           NodoAVL<Key>* hijoDer = static_cast<NodoAVL<Key>*>(nodo->getDcho());
-          if (hijoDer->getBal() == -1) {
+          Key datoAntes = nodoAvl->getDato();
+          int balAntes = nodoAvl->getBal();
+          if (hijoDer->getBal() == 1) {
             rotarDI(nodo);
             if (traza_) {
-              std::cout << "Rotacion DI en [" << nodoAvl->getDato() << "("
-                        << nodoAvl->getBal() << ")]:\n";
+              std::cout << "Rotacion DI en [" << datoAntes << "(" << balAntes << ")]:\n";
               escribirNiveles(std::cout, this->raiz, true);
             }
           } else {
             rotarDD(nodo);
             if (traza_) {
-              std::cout << "Rotacion DD en [" << nodoAvl->getDato() << "("
-                        << nodoAvl->getBal() << ")]:\n";
+              std::cout << "Rotacion DD en [" << datoAntes << "(" << balAntes << ")]:\n";
               escribirNiveles(std::cout, this->raiz, true);
             }
           }
@@ -113,12 +113,12 @@ class AVL : public ABB<Key> {
     nodo1->setDcho(nodo);
 
     NodoAVL<Key>* nodoAvl = static_cast<NodoAVL<Key>*>(nodo);
-    if (nodo1->getBal() == -1) {
+    if (nodo1->getBal() == 1) {
       nodoAvl->setBal(0);
       nodo1->setBal(0);
     } else {
-      nodoAvl->setBal(-1);
-      nodo1->setBal(1);
+      nodoAvl->setBal(1);
+      nodo1->setBal(-1);
     }
 
     nodo = nodo1;
@@ -130,12 +130,12 @@ class AVL : public ABB<Key> {
     nodo1->setIzdo(nodo);
 
     NodoAVL<Key>* nodoAvl = static_cast<NodoAVL<Key>*>(nodo);
-    if (nodo1->getBal() == 1) {
+    if (nodo1->getBal() == -1) {
       nodoAvl->setBal(0);
       nodo1->setBal(0);
     } else {
-      nodoAvl->setBal(1);
-      nodo1->setBal(-1);
+      nodoAvl->setBal(-1);
+      nodo1->setBal(1);
     }
 
     nodo = nodo1;
@@ -149,31 +149,6 @@ class AVL : public ABB<Key> {
     nodo2->setIzdo(nodo1);
     nodo->setIzdo(nodo2->getDcho());
     nodo2->setDcho(nodo);
-
-    NodoAVL<Key>* nodoAvl = static_cast<NodoAVL<Key>*>(nodo);
-    if (nodo2->getBal() == -1) {
-      nodoAvl->setBal(1);
-      nodo1->setBal(0);
-    } else if (nodo2->getBal() == 0) {
-      nodoAvl->setBal(0);
-      nodo1->setBal(0);
-    } else {
-      nodoAvl->setBal(0);
-      nodo1->setBal(-1);
-    }
-    nodo2->setBal(0);
-
-    nodo = nodo2;
-  }
-
-  void rotarDI(NodoB<Key>*& nodo) {
-    NodoAVL<Key>* nodo1 = static_cast<NodoAVL<Key>*>(nodo->getDcho());
-    NodoAVL<Key>* nodo2 = static_cast<NodoAVL<Key>*>(nodo1->getIzdo());
-
-    nodo1->setIzdo(nodo2->getDcho());
-    nodo2->setDcho(nodo1);
-    nodo->setDcho(nodo2->getIzdo());
-    nodo2->setIzdo(nodo);
 
     NodoAVL<Key>* nodoAvl = static_cast<NodoAVL<Key>*>(nodo);
     if (nodo2->getBal() == 1) {
@@ -191,9 +166,34 @@ class AVL : public ABB<Key> {
     nodo = nodo2;
   }
 
+  void rotarDI(NodoB<Key>*& nodo) {
+    NodoAVL<Key>* nodo1 = static_cast<NodoAVL<Key>*>(nodo->getDcho());
+    NodoAVL<Key>* nodo2 = static_cast<NodoAVL<Key>*>(nodo1->getIzdo());
+
+    nodo1->setIzdo(nodo2->getDcho());
+    nodo2->setDcho(nodo1);
+    nodo->setDcho(nodo2->getIzdo());
+    nodo2->setIzdo(nodo);
+
+    NodoAVL<Key>* nodoAvl = static_cast<NodoAVL<Key>*>(nodo);
+    if (nodo2->getBal() == -1) {
+      nodoAvl->setBal(1);
+      nodo1->setBal(0);
+    } else if (nodo2->getBal() == 0) {
+      nodoAvl->setBal(0);
+      nodo1->setBal(0);
+    } else {
+      nodoAvl->setBal(0);
+      nodo1->setBal(-1);
+    }
+    nodo2->setBal(0);
+
+    nodo = nodo2;
+  }
+
   void escribirNiveles(std::ostream& os, NodoB<Key>* raiz, bool mostrarBal) const {
     if (!raiz) {
-      os << "[arbol vacio]\n";
+      os << "Nivel 0: [.]\n";
       return;
     }
     std::queue<NodoB<Key>*> cola;

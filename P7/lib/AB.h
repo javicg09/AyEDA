@@ -20,9 +20,9 @@ class AB {
     std::cout << "\n";
   }
 
-  void escribir(std::ostream& os) const {
+  virtual void escribir(std::ostream& os) const {
     if (!raiz) {
-      os << "[arbol vacio]\n";
+      os << "Nivel 0: [.]\n";
       return;
     }
     std::queue<NodoB<Key>*> cola;
